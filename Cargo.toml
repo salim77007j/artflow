@@ -33,7 +33,7 @@ glam = "0.29"
 # Image format support
 image = { version = "0.25", default-features = false, features = [
     "png", "jpeg", "gif", "bmp", "tiff", "webp",
-    "tga", "dds", "hdr", "openexr", "ff", "rayon",
+    "tga", "dds", "hdr", "exr", "ff", "rayon",
 ] }
 imageproc = { version = "0.25", default-features = false }
 
