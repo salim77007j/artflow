@@ -249,7 +249,7 @@ impl eframe::App for ArtFlowApp {
             .frame(
                 egui::Frame::none()
                     .fill(egui::Color32::from_rgb(252, 253, 255))
-                    .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(225, 228, 234))),
+                    .stroke(egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(225, 228, 234))),
             )
             .show(ctx, |ui| {
                 toolbar::show_left(ui, self);
@@ -264,7 +264,7 @@ impl eframe::App for ArtFlowApp {
             .frame(
                 egui::Frame::none()
                     .fill(egui::Color32::from_rgb(248, 249, 251))
-                    .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(225, 228, 234))),
+                    .stroke(egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(225, 228, 234))),
             )
             .show(ctx, |ui| {
                 crate::ui::panels::show_right_panels(ui, self);
@@ -275,7 +275,7 @@ impl eframe::App for ArtFlowApp {
             .frame(
                 egui::Frame::none()
                     .fill(egui::Color32::from_rgb(245, 246, 248))
-                    .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(225, 228, 234))),
+                    .stroke(egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(225, 228, 234))),
             )
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
@@ -327,26 +327,26 @@ pub fn configure_egui(ctx: &Context) {
     visuals.extreme_bg_color = egui::Color32::from_rgb(232, 235, 240);
     visuals.widgets.noninteractive.bg_fill = egui::Color32::from_rgb(248, 249, 251);
     visuals.widgets.noninteractive.bg_stroke =
-        egui::Stroke::new(1.0, egui::Color32::from_rgb(225, 228, 234));
+        egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(225, 228, 234));
     visuals.widgets.inactive.bg_fill = egui::Color32::from_rgb(255, 255, 255);
     visuals.widgets.inactive.bg_stroke =
-        egui::Stroke::new(1.0, egui::Color32::from_rgb(220, 224, 232));
+        egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(220, 224, 232));
     visuals.widgets.inactive.rounding = egui::Rounding::same(6.0);
     visuals.widgets.hovered.bg_fill = egui::Color32::from_rgb(238, 242, 250);
     visuals.widgets.hovered.bg_stroke =
-        egui::Stroke::new(1.0, egui::Color32::from_rgb(180, 200, 232));
+        egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(180, 200, 232));
     visuals.widgets.hovered.rounding = egui::Rounding::same(6.0);
     visuals.widgets.active.bg_fill = egui::Color32::from_rgb(220, 230, 248);
     visuals.widgets.active.bg_stroke =
-        egui::Stroke::new(1.0, egui::Color32::from_rgb(90, 140, 230));
+        egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(90, 140, 230));
     visuals.widgets.active.rounding = egui::Rounding::same(6.0);
     visuals.selection.bg_fill = egui::Color32::from_rgb(160, 198, 255);
-    visuals.selection.stroke = egui::Stroke::new(1.0, egui::Color32::from_rgb(60, 130, 240));
+    visuals.selection.stroke = egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(60, 130, 240));
     visuals.hyperlink_color = egui::Color32::from_rgb(60, 130, 240);
 
     // Spacing.
     style.spacing.item_spacing = egui::vec2(6.0, 4.0);
-    style.spacing.window_margin = egui::Margin::same(8);
+    style.spacing.window_margin = egui::Margin::same(8.0_f32);
 
     ctx.set_style(style);
 }

@@ -8,7 +8,7 @@ pub fn show(ctx: &egui::Context, app: &mut ArtFlowApp) {
         .frame(
             egui::Frame::none()
                 .fill(egui::Color32::from_rgb(252, 253, 255))
-                .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(225, 228, 234))),
+                .stroke(egui::Stroke::new(1.0_f32, egui::Color32::from_rgb(225, 228, 234))),
         )
         .show(ctx, |ui| {
             ui.horizontal(|ui| {
@@ -268,4 +268,4 @@ fn view_menu(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
 
 // Suppress unused warning
 #[allow(dead_code)]
-fn _button_unused() -> Button { Button::new("") }
+fn _button_unused() -> Button<'static> { Button::new("") }

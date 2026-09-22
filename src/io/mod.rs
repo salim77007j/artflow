@@ -48,7 +48,7 @@ pub fn save_flat(app: &mut ArtFlowApp, path: &Path, quality: u8) -> anyhow::Resu
         "tga" => dyn_img.save_with_format(path, image::ImageFormat::Tga)?,
         "dds" => dyn_img.save_with_format(path, image::ImageFormat::Dds)?,
         "hdr" => dyn_img.save_with_format(path, image::ImageFormat::Hdr)?,
-        "exr" => dyn_img.save_with_format(path, image::ImageFormat::Exr)?,
+        "exr" => dyn_img.save_with_format(path, image::ImageFormat::OpenExr)?,
         _ => dyn_img.save(path)?,
     }
     let _ = quality;

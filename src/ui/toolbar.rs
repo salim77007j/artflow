@@ -55,9 +55,9 @@ pub fn show_left(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
             let bg_col = Color32::from_rgb(bg.0, bg.1, bg.2);
             let (rect_fg, rect_bg) = color_pair(ui);
             ui.painter().rect_filled(rect_fg, 0.0, fg_col);
-            ui.painter().rect_stroke(rect_fg, 0.0, egui::Stroke::new(1.0, Color32::from_rgb(80, 80, 80)));
+            ui.painter().rect_stroke(rect_fg, 0.0, egui::Stroke::new(1.0_f32, Color32::from_rgb(80, 80, 80)));
             ui.painter().rect_filled(rect_bg, 0.0, bg_col);
-            ui.painter().rect_stroke(rect_bg, 0.0, egui::Stroke::new(1.0, Color32::from_rgb(80, 80, 80)));
+            ui.painter().rect_stroke(rect_bg, 0.0, egui::Stroke::new(1.0_f32, Color32::from_rgb(80, 80, 80)));
             if ui.input(|i| i.modifiers.shift) && ui.input(|i| i.pointer.primary_clicked()) {
                 app.color.swap();
             } else if ui.input(|i| i.pointer.primary_clicked()) && rect_bg.contains(ui.input(|i| i.pointer.hover_pos().unwrap_or_default())) {

@@ -85,7 +85,7 @@ pub fn show(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp) {
     );
 
     // Canvas border.
-    painter.rect_stroke(canvas_rect, 0.0, Stroke::new(1.0, Color32::from_rgb(60, 80, 120)));
+    painter.rect_stroke(canvas_rect, 0.0, Stroke::new(1.0_f32, Color32::from_rgb(60, 80, 120)));
 
     // Marching ants around selection bounds.
     if let Some(b) = doc.selection.bounds {
@@ -148,7 +148,7 @@ fn march(painter: &egui::Painter, a: Pos2, b: Pos2, phase: f32, dash: f32, color
         if t1 > t0 {
             let p0 = Pos2::new(a.x + dir.x * t0, a.y + dir.y * t0);
             let p1 = Pos2::new(a.x + dir.x * t1, a.y + dir.y * t1);
-            painter.line_segment([p0, p1], Stroke::new(1.0, color));
+            painter.line_segment([p0, p1], Stroke::new(1.0_f32, color));
         }
         t += dash;
     }
@@ -239,7 +239,7 @@ fn handle_pointer(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp, r
                     canvas_rect.min.y + drag.start_y.max(drag.cur_y) * doc.canvas.zoom,
                 ),
             );
-            ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0, Color32::from_rgb(60, 130, 240)));
+            ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0_f32, Color32::from_rgb(60, 130, 240)));
         }
     }
 }

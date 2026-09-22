@@ -91,9 +91,13 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
 
             // Header row (Normal / Opacity).
             ui.horizontal(|ui| {
-                let blend_label = app.doc().and_then(|d| d.active_layer).map(|id| {
-                    d.layer(id).map(|l| l.blend).unwrap_or_default()
-                }).unwrap_or_default();
+                let blend_label: BlendMode = app.doc()
+                    .and_then(|d| d.active_layer)
+                    .and_then(|id| {
+                        let doc = app.doc();
+                        doc.and_then(|d2| d2.layer(id)).map(|l| l.blend)
+                    })
+                    .unwrap_or_default();
                 egui::ComboBox::from_label("")
                     .selected_text(blend_label.label())
                     .show_ui(ui, |ui| {
@@ -106,10 +110,14 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                         }
                     });
                 ui.label("Opacity");
-                let mut op = app.doc().and_then(|d| d.active_layer).map(|id| {
-                    d.layer(id).map(|l| l.opacity * 100.0).unwrap_or(100.0)
-                }).unwrap_or(100.0);
-                if ui.add(egui::Slider::new(&mut op, 0.0..=100.0).show_value(true)).changed() {
+                let mut op: f32 = app.doc()
+                    .and_then(|d| d.active_layer)
+                    .and_then(|id| {
+                        let doc = app.doc();
+                        doc.and_then(|d2| d2.layer(id)).map(|l| l.opacity * 100.0)
+                    })
+                    .unwrap_or(100.0);
+                if ui.add(egui::Slider::new(&mut op, 0.0..=100.0_f32).show_value(true)).changed() {
                     if let Some(d) = app.doc_mut() {
                         if let Some(id) = d.active_layer { d.set_layer_opacity(id, op / 100.0); }
                     }
@@ -125,7 +133,7 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                     let is_active = active == Some(layer.id);
                     let frame = egui::Frame::none()
                         .fill(if is_active { Color32::from_rgb(232, 240, 252) } else { Color32::TRANSPARENT })
-                        .stroke(egui::Stroke::new(1.0, Color32::from_rgb(225, 228, 234)));
+                        .stroke(egui::Stroke::new(1.0_f32, Color32::from_rgb(225, 228, 234)));
                     egui::Frame::show(frame, ui, |ui| {
                         ui.horizontal(|ui| {
                             // Visibility toggle.
@@ -205,7 +213,7 @@ fn color_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                         let rect_size = 22.0;
                         let (rect, _) = ui.allocate_exact_size(egui::vec2(rect_size, rect_size), egui::Sense::click());
                         ui.painter().rect_filled(rect, 0.0, Color32::from_rgb(r, g, b));
-                        ui.painter().rect_stroke(rect, 0.0, egui::Stroke::new(1.0, Color32::from_rgb(60, 60, 60)));
+                        ui.painter().rect_stroke(rect, 0.0, egui::Stroke::new(1.0_f32, Color32::from_rgb(60, 60, 60)));
                         if ui.input(|i| i.pointer.primary_clicked()) && rect.contains(ui.input(|i| i.pointer.hover_pos().unwrap_or_default())) {
                             app.color.foreground = c;
                         }
@@ -230,7 +238,7 @@ fn brush_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
             let rect = ui.allocate_exact_size(egui::vec2(ui.available_width() - 16.0, 60.0), egui::Sense::hover()).0;
             let painter = ui.painter_at(rect);
             painter.rect_filled(rect, 0.0, Color32::WHITE);
-            painter.rect_stroke(rect, 0.0, egui::Stroke::new(1.0, Color32::from_rgb(225, 228, 234)));
+            painter.rect_stroke(rect, 0.0, egui::Stroke::new(1.0_f32, Color32::from_rgb(225, 228, 234)));
             let cx = rect.min.x + rect.width() * 0.5;
             let cy = rect.min.y + rect.height() * 0.5;
             let (r, g, b, _) = app.color.foreground.to_rgba8();
@@ -249,33 +257,29 @@ fn brush_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
 
 fn draw_color_wheel(painter: &egui::Painter, rect: egui::Rect) {
     let center = rect.center();
-    let r = rect.width().min(rect.height()) * 0.5 - 4.0;
+    let r = rect.width().min(rect.height()) * 0.5 - 4.0_f32;
     let steps = 96;
     for i in 0..steps {
         let a0 = (i as f32 / steps as f32) * std::f32::consts::TAU;
         let a1 = ((i + 1) as f32 / steps as f32) * std::f32::consts::TAU;
-        let c0 = Rgba::from_hsl(i as f32 / steps as f32, 1.0, 0.5);
-        let c1 = Rgba::from_hsl((i + 1) as f32 / steps as f32, 1.0, 0.5);
+        let c0 = Rgba::from_hsl(i as f32 / steps as f32, 1.0_f32, 0.5_f32);
+        let c1 = Rgba::from_hsl((i + 1) as f32 / steps as f32, 1.0_f32, 0.5_f32);
         let p0 = center + egui::vec2(a0.cos() * r, a0.sin() * r);
-        let p1 = center + egui::vec2(a0.cos() * (r * 0.3), a0.sin() * (r * 0.3));
-        let p2 = center + egui::vec2(a1.cos() * (r * 0.3), a1.sin() * (r * 0.3));
+        let p1 = center + egui::vec2(a0.cos() * (r * 0.3_f32), a0.sin() * (r * 0.3_f32));
+        let p2 = center + egui::vec2(a1.cos() * (r * 0.3_f32), a1.sin() * (r * 0.3_f32));
         let p3 = center + egui::vec2(a1.cos() * r, a1.sin() * r);
         let (r0, g0, b0, _) = c0.to_rgba8();
         let (r1, g1, b1, _) = c1.to_rgba8();
         let mut mesh = egui::Mesh::default();
-        mesh.add_triangle(
-            egui::epaint::mesh::Vertex { pos: p0, uv: egui::pos2(0.0, 0.0), color: Color32::from_rgb(r0, g0, b0) },
-            egui::epaint::mesh::Vertex { pos: p1, uv: egui::pos2(0.0, 1.0), color: Color32::WHITE },
-            egui::epaint::mesh::Vertex { pos: p2, uv: egui::pos2(1.0, 1.0), color: Color32::WHITE },
-        );
-        mesh.add_triangle(
-            egui::epaint::mesh::Vertex { pos: p0, uv: egui::pos2(0.0, 0.0), color: Color32::from_rgb(r0, g0, b0) },
-            egui::epaint::mesh::Vertex { pos: p2, uv: egui::pos2(1.0, 1.0), color: Color32::WHITE },
-            egui::epaint::mesh::Vertex { pos: p3, uv: egui::pos2(1.0, 0.0), color: Color32::from_rgb(r1, g1, b1) },
-        );
+        let i0 = mesh.colored_vertex(p0, Color32::from_rgb(r0, g0, b0));
+        let i1 = mesh.colored_vertex(p1, Color32::WHITE);
+        let i2 = mesh.colored_vertex(p2, Color32::WHITE);
+        let i3 = mesh.colored_vertex(p3, Color32::from_rgb(r1, g1, b1));
+        mesh.add_triangle(i0, i1, i2);
+        mesh.add_triangle(i0, i2, i3);
         painter.add(egui::Shape::mesh(mesh));
     }
-    painter.circle_stroke(center, r, egui::Stroke::new(1.0, Color32::from_rgb(60, 60, 60)));
+    painter.circle_stroke(center, r, egui::Stroke::new(1.0_f32, Color32::from_rgb(60, 60, 60)));
 }
 
 fn sample_color_wheel(pos: egui::Pos2, rect: egui::Rect) -> Rgba {
