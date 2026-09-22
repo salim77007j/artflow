@@ -7,6 +7,7 @@ use crate::render::pixel_buffer::PixelBuffer;
 use eframe::egui::{self, Color32, ColorImage, Pos2, Rect, Sense, Stroke, TextureHandle, Vec2};
 
 /// Persistent texture cache so we don't re-upload every frame.
+#[derive(Clone)]
 pub struct CanvasTextures {
     pub composite: Option<TextureHandle>,
     pub layer_previews: Vec<Option<TextureHandle>>,

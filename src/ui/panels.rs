@@ -138,7 +138,7 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                             // Thumbnail.
                             if let Some(pix) = layer.as_pixel() {
                                 let thumb = thumbnail(ui.ctx(), pix);
-                                ui.image(thumb);
+                                ui.image(&thumb);
                             }
                             ui.vertical(|ui| {
                                 ui.label(&layer.name);
@@ -262,20 +262,19 @@ fn draw_color_wheel(painter: &egui::Painter, rect: egui::Rect) {
         let p3 = center + egui::vec2(a1.cos() * r, a1.sin() * r);
         let (r0, g0, b0, _) = c0.to_rgba8();
         let (r1, g1, b1, _) = c1.to_rgba8();
-        let mesh = egui::Mesh {
-            indices: vec![0, 1, 2, 0, 2, 3],
-            vertices: vec![
-                egui::Vertex { pos: p0, uv: egui::pos2(0.0, 0.0), color: Color32::from_rgb(r0, g0, b0) },
-                egui::Vertex { pos: p1, uv: egui::pos2(0.0, 1.0), color: Color32::WHITE },
-                egui::Vertex { pos: p2, uv: egui::pos2(1.0, 1.0), color: Color32::WHITE },
-                egui::Vertex { pos: p3, uv: egui::pos2(1.0, 0.0), color: Color32::from_rgb(r1, g1, b1) },
-            ],
-            texture_id: egui::TextureId::default(),
-            bounds: rect,
-        };
+        let mut mesh = egui::Mesh::default();
+        mesh.add_triangle(
+            egui::epaint::mesh::Vertex { pos: p0, uv: egui::pos2(0.0, 0.0), color: Color32::from_rgb(r0, g0, b0) },
+            egui::epaint::mesh::Vertex { pos: p1, uv: egui::pos2(0.0, 1.0), color: Color32::WHITE },
+            egui::epaint::mesh::Vertex { pos: p2, uv: egui::pos2(1.0, 1.0), color: Color32::WHITE },
+        );
+        mesh.add_triangle(
+            egui::epaint::mesh::Vertex { pos: p0, uv: egui::pos2(0.0, 0.0), color: Color32::from_rgb(r0, g0, b0) },
+            egui::epaint::mesh::Vertex { pos: p2, uv: egui::pos2(1.0, 1.0), color: Color32::WHITE },
+            egui::epaint::mesh::Vertex { pos: p3, uv: egui::pos2(1.0, 0.0), color: Color32::from_rgb(r1, g1, b1) },
+        );
         painter.add(egui::Shape::mesh(mesh));
     }
-    // Outer ring.
     painter.circle_stroke(center, r, egui::Stroke::new(1.0, Color32::from_rgb(60, 60, 60)));
 }
 

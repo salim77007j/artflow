@@ -20,7 +20,7 @@ pub enum Operation {
     PixelsChanged { label: String },
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct HistoryStack {
     done: Vec<Operation>,
     undone: Vec<Operation>,

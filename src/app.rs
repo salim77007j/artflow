@@ -148,7 +148,7 @@ impl ArtFlowApp {
         }
 
         // Zoom shortcuts.
-        if ctrl && (matches!(key, Key::Equal) || matches!(key, Key::Plus)) {
+        if ctrl && (matches!(key, Key::Equals) || matches!(key, Key::Plus)) {
             if let Some(doc) = self.doc_mut() {
                 doc.canvas.zoom = (doc.canvas.zoom * 1.25).min(32.0);
                 return true;
@@ -331,15 +331,15 @@ pub fn configure_egui(ctx: &Context) {
     visuals.widgets.inactive.bg_fill = egui::Color32::from_rgb(255, 255, 255);
     visuals.widgets.inactive.bg_stroke =
         egui::Stroke::new(1.0, egui::Color32::from_rgb(220, 224, 232));
-    visuals.widgets.inactive.corner_radius = egui::CornerRadius::same(6);
+    visuals.widgets.inactive.rounding = egui::Rounding::same(6.0);
     visuals.widgets.hovered.bg_fill = egui::Color32::from_rgb(238, 242, 250);
     visuals.widgets.hovered.bg_stroke =
         egui::Stroke::new(1.0, egui::Color32::from_rgb(180, 200, 232));
-    visuals.widgets.hovered.corner_radius = egui::CornerRadius::same(6);
+    visuals.widgets.hovered.rounding = egui::Rounding::same(6.0);
     visuals.widgets.active.bg_fill = egui::Color32::from_rgb(220, 230, 248);
     visuals.widgets.active.bg_stroke =
         egui::Stroke::new(1.0, egui::Color32::from_rgb(90, 140, 230));
-    visuals.widgets.active.corner_radius = egui::CornerRadius::same(6);
+    visuals.widgets.active.rounding = egui::Rounding::same(6.0);
     visuals.selection.bg_fill = egui::Color32::from_rgb(160, 198, 255);
     visuals.selection.stroke = egui::Stroke::new(1.0, egui::Color32::from_rgb(60, 130, 240));
     visuals.hyperlink_color = egui::Color32::from_rgb(60, 130, 240);
