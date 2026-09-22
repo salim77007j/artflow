@@ -23,7 +23,7 @@ opt-level = 1
 
 [dependencies]
 # UI framework — egui is immediate mode, ideal for a creative tool
-egui = { version = "0.29", features = ["serde", "default-fonts"] }
+egui = { version = "0.29", features = ["serde", "default_fonts"] }
 eframe = { version = "0.29", features = ["default_fonts", "persistence"] }
 egui_extras = { version = "0.29", features = ["all_loaders", "image"] }
 
