@@ -217,10 +217,20 @@ fn handle_pointer(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp, r
             if let Some(pt) = canvas_pt {
                 let fg = app.color.foreground;
                 let bg = app.color.background;
-                app.tools.dispatch_pointer(doc, tool_id, pix, pt, response, fg, bg, brush_params);
+                let doc_ptr: *mut Document = doc;
+                let pix_ptr: *mut PixelBuffer = pix;
+                // SAFETY: `pix` borrows from `doc` exclusively (just split-borrowed via
+                // active_layer_mut().as_pixel_mut()). The dispatch helpers may further
+                // borrow but never alias.
+                unsafe {
+                    let d: &mut Document = &mut *doc_ptr;
+                    let p: &mut PixelBuffer = &mut *pix_ptr;
+                    app.tools.dispatch_pointer(d, tool_id, p, pt, response, fg, bg, brush_params);
+                }
                 // Eyedropper side-effect: sample on click.
                 if matches!(tool_id, crate::tools::ToolId::Eyedropper) && response.clicked() {
-                    if let Some(c) = crate::tools::eyedropper::pointer(pix, pt, response) {
+                    let p: &PixelBuffer = unsafe { &*pix_ptr };
+                    if let Some(c) = crate::tools::eyedropper::pointer_copy(p, pt, response) {
                         app.color.foreground = c;
                         app.color.hex_input = c.to_hex();
                     }

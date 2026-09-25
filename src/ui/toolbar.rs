@@ -31,7 +31,7 @@ pub fn show_left(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                 .min_size(egui::vec2(40.0, 40.0))
                 .fill(if active { Color32::from_rgb(220, 230, 248) } else { Color32::TRANSPARENT })
                 .stroke(egui::Stroke::new(
-                    1.0,
+                    1.0_f32,
                     if active { Color32::from_rgb(90, 140, 230) } else { Color32::from_rgb(220, 224, 232) },
                 )),
         );
@@ -78,18 +78,18 @@ pub fn show_secondary_strip(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
     ui.label(egui::RichText::new(format!("{} — {}", app.active_tool.label(), app.active_tool.shortcut())).strong());
     ui.separator();
     ui.label("Size:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5..=512.0).speed(1.0));
+    ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5_f32..=512.0_f32).speed(1.0));
     ui.label("Hardness:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_hardness).range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_hardness).range(0.0_f32..=1.0_f32).speed(0.01));
     ui.label("Opacity:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_opacity).range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_opacity).range(0.0_f32..=1.0_f32).speed(0.01));
     ui.label("Flow:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_flow).range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_flow).range(0.0_f32..=1.0_f32).speed(0.01));
 }
 
 pub fn show_topbar_right(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
     if let Some(doc) = app.doc() {
-        ui.label(format!("Zoom: {:.0}%", doc.canvas.zoom * 100.0));
+        ui.label(format!("Zoom: {:.0}%", doc.canvas.zoom * 100.0_f32));
         if ui.button("Fit").clicked() {
             if let Some(d) = app.doc_mut() { d.canvas.fit_to_view = true; }
         }

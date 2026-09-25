@@ -304,7 +304,7 @@ impl DocumentStore {
         self.docs.push(doc);
         id
     }
-    pub fn get(&self, id: u64) -> Option<&Document> { self.docs.iter().find(|d| d.name.len() > 0).and_then(|_| self.docs.first()) }
+    pub fn get(&self, _id: u64) -> Option<&Document> { self.docs.first() }
     pub fn get_mut(&mut self, id: u64) -> Option<&mut Document> {
         // We're using index-based identity for now.
         self.docs.get_mut(id as usize)

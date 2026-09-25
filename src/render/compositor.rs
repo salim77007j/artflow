@@ -25,7 +25,7 @@ pub fn flatten_visible(doc: &Document) -> Option<PixelBuffer> {
                     src
                 };
                 let opacity = layer.opacity;
-                let mut tinted = Rgba::new(masked.r, masked.g, masked.b, masked.a * opacity);
+                let tinted = Rgba::new(masked.r, masked.g, masked.b, masked.a * opacity);
                 if tinted.a <= 0.0 { continue; }
                 let dst = acc.get_pixel(x, y);
                 let blended = blend(tinted, dst, layer.blend);

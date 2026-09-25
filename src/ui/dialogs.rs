@@ -61,7 +61,7 @@ fn canvas_size_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
 fn blur_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut radius = app.panels.blur_radius;
     egui::Window::new("Gaussian Blur").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut radius, 0.0..=64.0).text("Radius"));
+        ui.add(egui::Slider::new(&mut radius, 0.0_f32..=64.0_f32).text("Radius"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::blur::GaussianBlur { radius: radius as u32 });
@@ -76,7 +76,7 @@ fn blur_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
 fn sharpen_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut amount = app.panels.sharpen_amount;
     egui::Window::new("Sharpen").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut amount, 0.0..=4.0).text("Amount"));
+        ui.add(egui::Slider::new(&mut amount, 0.0_f32..=4.0_f32).text("Amount"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::blur::Sharpen { amount });
@@ -92,8 +92,8 @@ fn brightness_contrast_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut brightness = app.panels.bc_brightness;
     let mut contrast = app.panels.bc_contrast;
     egui::Window::new("Brightness / Contrast").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut brightness, -1.0..=1.0).text("Brightness"));
-        ui.add(egui::Slider::new(&mut contrast, -1.0..=1.0).text("Contrast"));
+        ui.add(egui::Slider::new(&mut brightness, -1.0_f32..=1.0_f32).text("Brightness"));
+        ui.add(egui::Slider::new(&mut contrast, -1.0_f32..=1.0_f32).text("Contrast"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::adjustments::BrightnessContrast { brightness, contrast });
@@ -111,9 +111,9 @@ fn hue_sat_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut sat = app.panels.sat_mult;
     let mut val = app.panels.val_mult;
     egui::Window::new("Hue / Saturation").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut hue, -1.0..=1.0).text("Hue"));
-        ui.add(egui::Slider::new(&mut sat, 0.0..=2.0).text("Saturation"));
-        ui.add(egui::Slider::new(&mut val, 0.0..=2.0).text("Lightness"));
+        ui.add(egui::Slider::new(&mut hue, -1.0_f32..=1.0_f32).text("Hue"));
+        ui.add(egui::Slider::new(&mut sat, 0.0_f32..=2.0_f32).text("Saturation"));
+        ui.add(egui::Slider::new(&mut val, 0.0_f32..=2.0_f32).text("Lightness"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::adjustments::HueSaturation { hue_shift: hue, sat_mult: sat, val_mult: val });
@@ -132,9 +132,9 @@ fn levels_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut gamma = app.panels.levels_gamma;
     let mut white = app.panels.levels_white;
     egui::Window::new("Levels").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut black, 0.0..=1.0).text("Black"));
-        ui.add(egui::Slider::new(&mut gamma, 0.1..=4.0).text("Gamma"));
-        ui.add(egui::Slider::new(&mut white, 0.0..=1.0).text("White"));
+        ui.add(egui::Slider::new(&mut black, 0.0_f32..=1.0_f32).text("Black"));
+        ui.add(egui::Slider::new(&mut gamma, 0.1..=4.0_f32).text("Gamma"));
+        ui.add(egui::Slider::new(&mut white, 0.0_f32..=1.0_f32).text("White"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::adjustments::Levels { black, gamma, white });
@@ -166,7 +166,7 @@ fn posterize_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
 fn threshold_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut threshold = app.panels.threshold_value;
     egui::Window::new("Threshold").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut threshold, 0.0..=1.0).text("Threshold"));
+        ui.add(egui::Slider::new(&mut threshold, 0.0_f32..=1.0_f32).text("Threshold"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::adjustments::Threshold { threshold });
@@ -181,7 +181,7 @@ fn threshold_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
 fn noise_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut amount = app.panels.noise_amount;
     egui::Window::new("Add Noise").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut amount, 0.0..=1.0).text("Amount"));
+        ui.add(egui::Slider::new(&mut amount, 0.0_f32..=1.0_f32).text("Amount"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::noise::AddNoise { amount });
@@ -196,7 +196,7 @@ fn noise_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
 fn swirl_dialog(ctx: &egui::Context, app: &mut ArtFlowApp) {
     let mut strength = app.panels.swirl_strength;
     egui::Window::new("Swirl").resizable(false).show(ctx, |ui| {
-        ui.add(egui::Slider::new(&mut strength, -10.0..=10.0).text("Strength"));
+        ui.add(egui::Slider::new(&mut strength, -10.0_f32..=10.0_f32).text("Strength"));
         ui.horizontal(|ui| {
             if ui.button("Apply").clicked() {
                 apply_filter(app, &crate::filters::distort::Swirl { strength });

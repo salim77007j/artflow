@@ -65,7 +65,7 @@ impl Selection {
     pub fn set_rect(&mut self, r: Rect, feather: f32) {
         self.mask.clear(Rgba::TRANSPARENT);
         let r = r.normalized();
-        let mut mask_buf = self.mask.as_mut_slice();
+        let mask_buf = self.mask.as_mut_slice();
         for y in r.y..(r.y + r.h) {
             for x in r.x..(r.x + r.w) {
                 let alpha = if feather <= 0.0 {
@@ -94,7 +94,7 @@ impl Selection {
         let cy = r.y as f32 + r.h as f32 * 0.5;
         let rx = r.w as f32 * 0.5;
         let ry = r.h as f32 * 0.5;
-        let mut mask_buf = self.mask.as_mut_slice();
+        let mask_buf = self.mask.as_mut_slice();
         for y in r.y..(r.y + r.h) {
             for x in r.x..(r.x + r.w) {
                 let nx = (x as f32 - cx) / rx.max(0.0001);
@@ -120,7 +120,7 @@ impl Selection {
         if x < 0 || y < 0 || x >= buf.width() as i32 || y >= buf.height() as i32 { return; }
         let target = buf.get_pixel(x as u32, y as u32);
         let tol = tolerance as f32 / 255.0;
-        let mut mask_buf = self.mask.as_mut_slice();
+        let mask_buf = self.mask.as_mut_slice();
         let mut visited = vec![false; (buf.width() * buf.height()) as usize];
         let mut stack = vec![(x, y)];
         while let Some((cx, cy)) = stack.pop() {
@@ -160,7 +160,7 @@ impl Selection {
 
     /// Invert selection mask.
     pub fn invert(&mut self) {
-        let mut mask_buf = self.mask.as_mut_slice();
+        let mask_buf = self.mask.as_mut_slice();
         for px in mask_buf.chunks_exact_mut(4) {
             px[3] = 255 - px[3];
         }

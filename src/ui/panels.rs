@@ -114,12 +114,12 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                     .and_then(|d| d.active_layer)
                     .and_then(|id| {
                         let doc = app.doc();
-                        doc.and_then(|d2| d2.layer(id)).map(|l| l.opacity * 100.0)
+                        doc.and_then(|d2| d2.layer(id)).map(|l| l.opacity * 100.0_f32)
                     })
-                    .unwrap_or(100.0);
-                if ui.add(egui::Slider::new(&mut op, 0.0..=100.0_f32).show_value(true)).changed() {
+                    .unwrap_or(100.0_f32);
+                if ui.add(egui::Slider::new(&mut op, 0.0_f32..=100.0_f32).show_value(true)).changed() {
                     if let Some(d) = app.doc_mut() {
-                        if let Some(id) = d.active_layer { d.set_layer_opacity(id, op / 100.0); }
+                        if let Some(id) = d.active_layer { d.set_layer_opacity(id, op / 100.0_f32); }
                     }
                 }
             });
@@ -150,7 +150,7 @@ fn layers_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
                             }
                             ui.vertical(|ui| {
                                 ui.label(&layer.name);
-                                ui.label(format!("Opacity {:.0}%", layer.opacity * 100.0));
+                                ui.label(format!("Opacity {:.0}%", layer.opacity * 100.0_f32));
                             });
                             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                                 if ui.button(if layer.locked { "🔒" } else { "🔓" }).clicked() {
@@ -195,8 +195,11 @@ fn color_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
             ui.horizontal(|ui| {
                 ui.label("HEX");
                 let resp = ui.text_edit_singleline(&mut app.color.hex_input);
-                if resp.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-                    app.color.set_fg_hex(&app.color.hex_input);
+                let lost = resp.lost_focus();
+                let enter = ui.input(|i| i.key_pressed(egui::Key::Enter));
+                if lost && enter {
+                    let s = app.color.hex_input.clone();
+                    app.color.set_fg_hex(&s);
                 }
             });
             // Swatches.
@@ -228,11 +231,11 @@ fn brush_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
     egui::CollapsingHeader::new(RichText::new("Brush Settings").strong())
         .default_open(true)
         .show(ui, |ui| {
-            ui.horizontal(|ui| { ui.label("Brush Size"); ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5..=512.0)); });
-            ui.horizontal(|ui| { ui.label("Opacity"); ui.add(egui::Slider::new(&mut app.color.brush_opacity, 0.0..=1.0).show_value(true)); });
-            ui.horizontal(|ui| { ui.label("Flow"); ui.add(egui::Slider::new(&mut app.color.brush_flow, 0.0..=1.0).show_value(true)); });
-            ui.horizontal(|ui| { ui.label("Hardness"); ui.add(egui::Slider::new(&mut app.color.brush_hardness, 0.0..=1.0).show_value(true)); });
-            ui.horizontal(|ui| { ui.label("Spacing"); ui.add(egui::Slider::new(&mut app.color.brush_spacing, 0.0..=1.0).show_value(true)); });
+            ui.horizontal(|ui| { ui.label("Brush Size"); ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5_f32..=512.0_f32)); });
+            ui.horizontal(|ui| { ui.label("Opacity"); ui.add(egui::Slider::new(&mut app.color.brush_opacity, 0.0_f32..=1.0_f32).show_value(true)); });
+            ui.horizontal(|ui| { ui.label("Flow"); ui.add(egui::Slider::new(&mut app.color.brush_flow, 0.0_f32..=1.0_f32).show_value(true)); });
+            ui.horizontal(|ui| { ui.label("Hardness"); ui.add(egui::Slider::new(&mut app.color.brush_hardness, 0.0_f32..=1.0_f32).show_value(true)); });
+            ui.horizontal(|ui| { ui.label("Spacing"); ui.add(egui::Slider::new(&mut app.color.brush_spacing, 0.0_f32..=1.0_f32).show_value(true)); });
             ui.add_space(4.0);
             // Brush preview.
             let rect = ui.allocate_exact_size(egui::vec2(ui.available_width() - 16.0, 60.0), egui::Sense::hover()).0;
