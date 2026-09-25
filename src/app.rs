@@ -192,8 +192,8 @@ impl ArtFlowApp {
 
         // Forward to active tool first.
         let tool = self.active_tool;
+        let tools = &mut self.tools;
         if let Some(doc) = self.doc_mut() {
-            let tools = &mut self.tools;
             if tools.handle_key(doc, tool, key, modifiers) {
                 return true;
             }
@@ -217,7 +217,7 @@ impl eframe::App for ArtFlowApp {
                 } = event
                 {
                     if *pressed {
-                        let k = if let Some(k) = *key { k } else if let Some(k) = *physical_key { k } else { Key::F35 };
+                        let k = key.or(*physical_key).unwrap_or(Key::F35);
                         self.pending_modifiers = *modifiers;
                         self.handle_shortcut(ctx, k, *modifiers);
                     }

@@ -13,7 +13,7 @@ pub fn pointer(doc: &mut Document, layer: &mut PixelBuffer, state: &mut ToolStat
         state.drag_cur = Some(pt);
     }
     if resp.dragged() { state.drag_cur = Some(pt); }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let (x0, y0, x1, y1) = (a.0, a.1, b.0, b.1);
             let dx = (x1 - x0) as f32;

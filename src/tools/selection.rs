@@ -13,7 +13,7 @@ pub fn pointer_rect(doc: &mut Document, state: &mut ToolState, pt: (i32, i32), r
     if resp.dragged() {
         state.drag_cur = Some(pt);
     }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let r = Rect::from_points(a.0, a.1, b.0, b.1);
             doc.selection.set_rect(r, 0.0);
@@ -31,7 +31,7 @@ pub fn pointer_ellipse(doc: &mut Document, state: &mut ToolState, pt: (i32, i32)
     if resp.dragged() {
         state.drag_cur = Some(pt);
     }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let r = Rect::from_points(a.0, a.1, b.0, b.1);
             doc.selection.set_ellipse(r, 0.0);

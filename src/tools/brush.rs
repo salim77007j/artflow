@@ -69,7 +69,7 @@ pub fn pointer(
         state.last_stamp = Some(pt);
         return;
     }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         state.last_stamp = None;
     }
 }

@@ -228,7 +228,7 @@ fn brush_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
     egui::CollapsingHeader::new(RichText::new("Brush Settings").strong())
         .default_open(true)
         .show(ui, |ui| {
-            ui.horizontal(|ui| { ui.label("Brush Size"); ui.add(egui::DragValue::new(&mut app.color.brush_size).clamp_range(0.5..=512.0)); });
+            ui.horizontal(|ui| { ui.label("Brush Size"); ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5..=512.0)); });
             ui.horizontal(|ui| { ui.label("Opacity"); ui.add(egui::Slider::new(&mut app.color.brush_opacity, 0.0..=1.0).show_value(true)); });
             ui.horizontal(|ui| { ui.label("Flow"); ui.add(egui::Slider::new(&mut app.color.brush_flow, 0.0..=1.0).show_value(true)); });
             ui.horizontal(|ui| { ui.label("Hardness"); ui.add(egui::Slider::new(&mut app.color.brush_hardness, 0.0..=1.0).show_value(true)); });
@@ -239,19 +239,24 @@ fn brush_panel(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
             let painter = ui.painter_at(rect);
             painter.rect_filled(rect, 0.0, Color32::WHITE);
             painter.rect_stroke(rect, 0.0, egui::Stroke::new(1.0_f32, Color32::from_rgb(225, 228, 234)));
-            let cx = rect.min.x + rect.width() * 0.5;
-            let cy = rect.min.y + rect.height() * 0.5;
-            let (r, g, b, _) = app.color.foreground.to_rgba8();
-            let col = Color32::from_rgb(r, g, b);
-            let r = (app.color.brush_size.min(rect.width() * 0.45) * 0.5).max(2.0);
+            let cx = rect.min.x + rect.width() * 0.5_f32;
+            let cy = rect.min.y + rect.height() * 0.5_f32;
+            let (fg_r, fg_g, fg_b, _) = app.color.foreground.to_rgba8();
+            let col = Color32::from_rgb(fg_r, fg_g, fg_b);
+            let stamp_r = (app.color.brush_size.min(rect.width() * 0.45_f32) * 0.5_f32).max(2.0_f32);
             // Approximate soft stamp.
-            let steps = 64;
+            let steps: u32 = 64;
             for i in 0..steps {
                 let t = i as f32 / steps as f32;
-                let rad = r * t;
-                let a = (1.0 - t).powf((1.0 - app.color.brush_hardness).max(0.01) * 2.0) * 255.0;
-                painter.circle_filled(egui::pos2(cx, cy), rad, Color32::from_rgba_unmultiplied(r, g, b, a as u8));
+                let rad = stamp_r * t;
+                let a = (1.0_f32 - t).powf((1.0_f32 - app.color.brush_hardness).max(0.01_f32) * 2.0_f32) * 255.0_f32;
+                painter.circle_filled(
+                    egui::pos2(cx, cy),
+                    rad,
+                    Color32::from_rgba_unmultiplied(fg_r, fg_g, fg_b, a as u8),
+                );
             }
+            let _ = col;
         });
 }
 
@@ -271,10 +276,10 @@ fn draw_color_wheel(painter: &egui::Painter, rect: egui::Rect) {
         let (r0, g0, b0, _) = c0.to_rgba8();
         let (r1, g1, b1, _) = c1.to_rgba8();
         let mut mesh = egui::Mesh::default();
-        let i0 = mesh.colored_vertex(p0, Color32::from_rgb(r0, g0, b0));
-        let i1 = mesh.colored_vertex(p1, Color32::WHITE);
-        let i2 = mesh.colored_vertex(p2, Color32::WHITE);
-        let i3 = mesh.colored_vertex(p3, Color32::from_rgb(r1, g1, b1));
+        let i0: u32 = mesh.vertices.len() as u32; mesh.colored_vertex(p0, Color32::from_rgb(r0, g0, b0));
+        let i1: u32 = mesh.vertices.len() as u32; mesh.colored_vertex(p1, Color32::WHITE);
+        let i2: u32 = mesh.vertices.len() as u32; mesh.colored_vertex(p2, Color32::WHITE);
+        let i3: u32 = mesh.vertices.len() as u32; mesh.colored_vertex(p3, Color32::from_rgb(r1, g1, b1));
         mesh.add_triangle(i0, i1, i2);
         mesh.add_triangle(i0, i2, i3);
         painter.add(egui::Shape::mesh(mesh));

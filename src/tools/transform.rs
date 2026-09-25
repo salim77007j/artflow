@@ -12,7 +12,7 @@ pub fn pointer_move(_doc: &mut Document, state: &mut ToolState, pt: (i32, i32), 
     if resp.dragged() {
         state.drag_cur = Some(pt);
     }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let dx = b.0 - a.0;
             let dy = b.1 - a.1;
@@ -31,7 +31,7 @@ pub fn pointer_crop(doc: &mut Document, state: &mut ToolState, pt: (i32, i32), r
         state.drag_cur = Some(pt);
     }
     if resp.dragged() { state.drag_cur = Some(pt); }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let x = a.0.min(b.0).max(0) as u32;
             let y = a.1.min(b.1).max(0) as u32;

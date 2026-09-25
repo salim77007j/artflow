@@ -78,13 +78,13 @@ pub fn show_secondary_strip(ui: &mut egui::Ui, app: &mut ArtFlowApp) {
     ui.label(egui::RichText::new(format!("{} — {}", app.active_tool.label(), app.active_tool.shortcut())).strong());
     ui.separator();
     ui.label("Size:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_size).clamp_range(0.5..=512.0).speed(1.0));
+    ui.add(egui::DragValue::new(&mut app.color.brush_size).range(0.5..=512.0).speed(1.0));
     ui.label("Hardness:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_hardness).clamp_range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_hardness).range(0.0..=1.0).speed(0.01));
     ui.label("Opacity:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_opacity).clamp_range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_opacity).range(0.0..=1.0).speed(0.01));
     ui.label("Flow:");
-    ui.add(egui::DragValue::new(&mut app.color.brush_flow).clamp_range(0.0..=1.0).speed(0.01));
+    ui.add(egui::DragValue::new(&mut app.color.brush_flow).range(0.0..=1.0).speed(0.01));
 }
 
 pub fn show_topbar_right(ui: &mut egui::Ui, app: &mut ArtFlowApp) {

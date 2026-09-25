@@ -16,7 +16,7 @@ pub fn pointer_rect(doc: &mut Document, layer: &mut PixelBuffer, state: &mut Too
         // (Live preview would require storing original state; for simplicity we just commit on release.)
         state.drag_cur = Some(pt);
     }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let (x0, y0) = (a.0.min(b.0), a.1.min(b.1));
             let (x1, y1) = (a.0.max(b.0), a.1.max(b.1));
@@ -37,7 +37,7 @@ pub fn pointer_rect(doc: &mut Document, layer: &mut PixelBuffer, state: &mut Too
 }
 
 pub fn pointer_ellipse(doc: &mut Document, layer: &mut PixelBuffer, state: &mut ToolState, pt: (i32, i32), resp: &Response, fg: Rgba) {
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             let cx = ((a.0 + b.0) as f32) * 0.5;
             let cy = ((a.1 + b.1) as f32) * 0.5;
@@ -69,7 +69,7 @@ pub fn pointer_line(doc: &mut Document, layer: &mut PixelBuffer, state: &mut Too
         state.drag_cur = Some(pt);
     }
     if resp.dragged() { state.drag_cur = Some(pt); }
-    if resp.drag_released() {
+    if resp.drag_stopped() {
         if let (Some(a), Some(b)) = (state.drag_start, state.drag_cur) {
             draw_line(layer, a.0, a.1, b.0, b.1, fg);
         }
