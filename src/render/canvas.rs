@@ -1,9 +1,11 @@
 //! The main canvas widget: pan, zoom, draw layers, draw active tool overlay.
 
-use crate::app::ArtFlowApp;
+use crate::color::ColorState;
 use crate::document::Document;
 use crate::render::compositor::flatten_into;
 use crate::render::pixel_buffer::PixelBuffer;
+use crate::tools::ToolRegistry;
+use crate::ui::panels::PanelState;
 use eframe::egui::{self, Color32, ColorImage, Pos2, Rect, Sense, Stroke, TextureHandle, Vec2};
 
 /// Persistent texture cache so we don't re-upload every frame.
@@ -27,7 +29,15 @@ impl Default for CanvasTextures {
 }
 
 /// Render the central canvas.
-pub fn show(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp) {
+pub fn show(
+    ui: &mut egui::Ui,
+    doc: &mut Document,
+    tools: &mut ToolRegistry,
+    color: &mut ColorState,
+    active_tool: crate::tools::ToolId,
+    _last_stamp: &mut Option<(i32, i32)>,
+    _panels: &mut PanelState,
+) {
     let available = ui.available_rect_before_wrap();
     let sense = Sense::drag();
 
@@ -204,19 +214,19 @@ fn handle_pointer(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp, r
     }
 
     // Hand off to active tool.
-    let tool_id = app.active_tool;
+    let tool_id = active_tool;
     let brush_params = crate::tools::BrushParams {
-        size: app.color.brush_size,
-        hardness: app.color.brush_hardness,
-        opacity: app.color.brush_opacity,
-        flow: app.color.brush_flow,
-        spacing: app.color.brush_spacing,
+        size: color.brush_size,
+        hardness: color.brush_hardness,
+        opacity: color.brush_opacity,
+        flow: color.brush_flow,
+        spacing: color.brush_spacing,
     };
     if let Some(layer) = doc.active_layer_mut() {
         if let Some(pix) = layer.as_pixel_mut() {
             if let Some(pt) = canvas_pt {
-                let fg = app.color.foreground;
-                let bg = app.color.background;
+                let fg = color.foreground;
+                let bg = color.background;
                 let doc_ptr: *mut Document = doc;
                 let pix_ptr: *mut PixelBuffer = pix;
                 // SAFETY: `pix` borrows from `doc` exclusively (just split-borrowed via
@@ -225,14 +235,14 @@ fn handle_pointer(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp, r
                 unsafe {
                     let d: &mut Document = &mut *doc_ptr;
                     let p: &mut PixelBuffer = &mut *pix_ptr;
-                    app.tools.dispatch_pointer(d, tool_id, p, pt, response, fg, bg, brush_params);
+                    tools.dispatch_pointer(d, tool_id, p, pt, response, fg, bg, brush_params);
                 }
                 // Eyedropper side-effect: sample on click.
                 if matches!(tool_id, crate::tools::ToolId::Eyedropper) && response.clicked() {
                     let p: &PixelBuffer = unsafe { &*pix_ptr };
                     if let Some(c) = crate::tools::eyedropper::pointer_copy(p, pt, response) {
-                        app.color.foreground = c;
-                        app.color.hex_input = c.to_hex();
+                        color.foreground = c;
+                        color.hex_input = c.to_hex();
                     }
                 }
             }

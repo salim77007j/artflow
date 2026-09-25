@@ -192,8 +192,9 @@ impl ArtFlowApp {
 
         // Forward to active tool first.
         let tool = self.active_tool;
-        if let Some(doc) = self.doc_mut() {
-            if self.tools.handle_key(doc, tool, key, modifiers) {
+        let Self { store, tools, active_doc, .. } = self;
+        if let Some(doc) = store.get_mut(active_doc.unwrap_or(0)) {
+            if tools.handle_key(doc, tool, key, modifiers) {
                 return true;
             }
         }
@@ -299,8 +300,16 @@ impl eframe::App for ArtFlowApp {
         egui::CentralPanel::default()
             .frame(egui::Frame::none().fill(egui::Color32::from_rgb(232, 235, 240)))
             .show(ctx, |ui| {
-                if let Some(doc) = self.doc_mut() {
-                    crate::render::canvas::show(ui, doc, self);
+                // Split-borrow: re-borrow each subfield explicitly so we can use them concurrently.
+                let store = &mut self.store;
+                let tools = &mut self.tools;
+                let color = &mut self.color;
+                let panels = &mut self.panels;
+                let last_stamp = &mut self.last_stamp;
+                let active_tool = self.active_tool;
+                let active_doc = self.active_doc;
+                if let Some(doc) = store.get_mut(active_doc) {
+                    crate::render::canvas::show(ui, doc, tools, color, active_tool, last_stamp, panels);
                 } else {
                     ui.centered_and_justified(|ui| {
                         ui.heading("No document open — press Ctrl+N to start");
