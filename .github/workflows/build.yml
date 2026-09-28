@@ -39,14 +39,24 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
 
       - name: Check
-        run: cargo check --${{ matrix.profile }}
+        run: |
+          if [ "${{ matrix.profile }}" = "release" ]; then
+            cargo check --release
+          else
+            cargo check
+          fi
 
       - name: Build
-        run: cargo build --${{ matrix.profile }} --verbose
+        run: |
+          if [ "${{ matrix.profile }}" = "release" ]; then
+            cargo build --release --verbose
+          else
+            cargo build --verbose
+          fi
 
       - name: Test
         if: matrix.profile == 'debug'
-        run: cargo test --${{ matrix.profile }} --verbose
+        run: cargo test --verbose
 
       - name: Strip & package binary
         if: matrix.profile == 'release'
