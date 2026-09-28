@@ -237,7 +237,7 @@ fn handle_pointer(
     let color_ptr: *mut ColorState = color;
     let layer_pix: Option<(i32, i32, *mut PixelBuffer)> = match unsafe { (*doc_ptr).active_layer_mut() } {
         Some(layer) => match layer.as_pixel_mut() {
-            Some(pix) => Some((layer.id, 0, pix as *mut PixelBuffer)),
+            Some(pix) => Some((layer.id as i32, 0, pix as *mut PixelBuffer)),
             None => None,
         },
         None => None,
