@@ -271,17 +271,16 @@ fn handle_pointer(
     if let Some(drag) = doc_ref.transform.drag {
         let zoom = doc_ref.canvas.zoom;
         let r = Rect::from_min_max(
-                Pos2::new(
-                    canvas_rect.min.x + drag.start_x.min(drag.cur_x) * zoom,
-                    canvas_rect.min.y + drag.start_y.min(drag.cur_y) * zoom,
-                ),
-                Pos2::new(
-                    canvas_rect.min.x + drag.start_x.max(drag.cur_x) * zoom,
-                    canvas_rect.min.y + drag.start_y.max(drag.cur_y) * zoom,
-                ),
-            );
-            ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0_f32, Color32::from_rgb(60, 130, 240)));
-        }
+            Pos2::new(
+                canvas_rect.min.x + drag.start_x.min(drag.cur_x) * zoom,
+                canvas_rect.min.y + drag.start_y.min(drag.cur_y) * zoom,
+            ),
+            Pos2::new(
+                canvas_rect.min.x + drag.start_x.max(drag.cur_x) * zoom,
+                canvas_rect.min.y + drag.start_y.max(drag.cur_y) * zoom,
+            ),
+        );
+        ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0_f32, Color32::from_rgb(60, 130, 240)));
     }
 }
 
