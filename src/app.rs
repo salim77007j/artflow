@@ -308,7 +308,8 @@ impl eframe::App for ArtFlowApp {
                 let last_stamp = &mut self.last_stamp;
                 let active_tool = self.active_tool;
                 let active_doc = self.active_doc;
-                if let Some(doc) = store.get_mut(active_doc) {
+                let doc_opt = active_doc.and_then(|id| store.get_mut(id));
+                if let Some(doc) = doc_opt {
                     crate::render::canvas::show(ui, doc, tools, color, active_tool, last_stamp, panels);
                 } else {
                     ui.centered_and_justified(|ui| {

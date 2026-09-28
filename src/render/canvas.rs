@@ -230,41 +230,54 @@ fn handle_pointer(
         flow: color.brush_flow,
         spacing: color.brush_spacing,
     };
-    if let Some(layer) = doc.active_layer_mut() {
-        if let Some(pix) = layer.as_pixel_mut() {
-            if let Some(pt) = canvas_pt {
-                let fg = color.foreground;
-                let bg = color.background;
-                let doc_ptr: *mut Document = doc;
-                let pix_ptr: *mut PixelBuffer = pix;
-                // SAFETY: `pix` borrows from `doc` exclusively (just split-borrowed via
-                // active_layer_mut().as_pixel_mut()). The dispatch helpers may further
-                // borrow but never alias.
-                unsafe {
-                    let d: &mut Document = &mut *doc_ptr;
-                    let p: &mut PixelBuffer = &mut *pix_ptr;
-                    tools.dispatch_pointer(d, tool_id, p, pt, response, fg, bg, brush_params);
-                }
-                // Eyedropper side-effect: sample on click.
-                if matches!(tool_id, crate::tools::ToolId::Eyedropper) && response.clicked() {
-                    let p: &PixelBuffer = unsafe { &*pix_ptr };
-                    if let Some(c) = crate::tools::eyedropper::pointer_copy(p, pt, response) {
-                        color.foreground = c;
-                        color.hex_input = c.to_hex();
-                    }
+    // Take raw pointers up-front so we can reborrow later without conflicting with the
+    // active_layer_mut()/as_pixel_mut() borrow chain.
+    let doc_ptr: *mut Document = doc;
+    let tools_ptr: *mut ToolRegistry = tools;
+    let color_ptr: *mut ColorState = color;
+    let layer_pix: Option<(i32, i32, *mut PixelBuffer)> = match unsafe { (*doc_ptr).active_layer_mut() } {
+        Some(layer) => match layer.as_pixel_mut() {
+            Some(pix) => Some((layer.id, 0, pix as *mut PixelBuffer)),
+            None => None,
+        },
+        None => None,
+    };
+    if let Some((_layer_id, _, pix_ptr)) = layer_pix {
+        if let Some(pt) = canvas_pt {
+            let fg = unsafe { (*color_ptr).foreground };
+            let bg = unsafe { (*color_ptr).background };
+            // SAFETY: `pix_ptr` was just created from `active_layer_mut().as_pixel_mut()`,
+            // so it points to a live `PixelBuffer` that is exclusively reachable through
+            // this raw pointer while we hold it. `doc_ptr` is also a fresh raw pointer.
+            unsafe {
+                let d: &mut Document = &mut *doc_ptr;
+                let p: &mut PixelBuffer = &mut *pix_ptr;
+                let t: &mut ToolRegistry = &mut *tools_ptr;
+                t.dispatch_pointer(d, tool_id, p, pt, response, fg, bg, brush_params);
+            }
+            // Eyedropper side-effect: sample on click.
+            if matches!(tool_id, crate::tools::ToolId::Eyedropper) && response.clicked() {
+                let p: &PixelBuffer = unsafe { &*pix_ptr };
+                if let Some(c) = crate::tools::eyedropper::pointer_copy(p, pt, response) {
+                    let c2: &mut ColorState = unsafe { &mut *color_ptr };
+                    c2.foreground = c;
+                    c2.hex_input = c.to_hex();
                 }
             }
         }
-        // Apply transform overlay
-        if let Some(drag) = doc.transform.drag {
-            let r = Rect::from_min_max(
+    }
+    let doc_ref: &mut Document = unsafe { &mut *doc_ptr };
+    // Apply transform overlay
+    if let Some(drag) = doc_ref.transform.drag {
+        let zoom = doc_ref.canvas.zoom;
+        let r = Rect::from_min_max(
                 Pos2::new(
-                    canvas_rect.min.x + drag.start_x.min(drag.cur_x) * doc.canvas.zoom,
-                    canvas_rect.min.y + drag.start_y.min(drag.cur_y) * doc.canvas.zoom,
+                    canvas_rect.min.x + drag.start_x.min(drag.cur_x) * zoom,
+                    canvas_rect.min.y + drag.start_y.min(drag.cur_y) * zoom,
                 ),
                 Pos2::new(
-                    canvas_rect.min.x + drag.start_x.max(drag.cur_x) * doc.canvas.zoom,
-                    canvas_rect.min.y + drag.start_y.max(drag.cur_y) * doc.canvas.zoom,
+                    canvas_rect.min.x + drag.start_x.max(drag.cur_x) * zoom,
+                    canvas_rect.min.y + drag.start_y.max(drag.cur_y) * zoom,
                 ),
             );
             ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0_f32, Color32::from_rgb(60, 130, 240)));
