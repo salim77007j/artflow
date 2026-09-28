@@ -5,7 +5,7 @@ use crate::color::Rgba;
 use crate::document::layer::BlendMode;
 use eframe::egui::{self, Color32, RichText, Vec2};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct PanelState {
     pub show_right: bool,
     pub show_image_size: bool,
@@ -39,6 +39,43 @@ pub struct PanelState {
     // Modal values
     pub modal_new_w: u32,
     pub modal_new_h: u32,
+}
+
+impl Default for PanelState {
+    fn default() -> Self {
+        Self {
+            show_right: true,
+            show_image_size: false,
+            show_canvas_size: false,
+            show_blur: false,
+            show_sharpen: false,
+            show_brightness_contrast: false,
+            show_hue_saturation: false,
+            show_levels: false,
+            show_posterize: false,
+            show_threshold: false,
+            show_noise: false,
+            show_swirl: false,
+            show_settings: false,
+            show_text_editor: false,
+            blur_radius: 0.0_f32,
+            sharpen_amount: 0.0_f32,
+            bc_brightness: 0.0_f32,
+            bc_contrast: 0.0_f32,
+            hue_shift: 0.0_f32,
+            sat_mult: 1.0_f32,
+            val_mult: 1.0_f32,
+            levels_black: 0.0_f32,
+            levels_gamma: 1.0_f32,
+            levels_white: 1.0_f32,
+            posterize_levels: 4,
+            threshold_value: 0.5_f32,
+            noise_amount: 0.0_f32,
+            swirl_strength: 0.0_f32,
+            modal_new_w: 1280,
+            modal_new_h: 720,
+        }
+    }
 }
 
 impl PanelState {
