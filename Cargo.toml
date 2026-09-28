@@ -47,7 +47,7 @@ bincode = "1"
 rmp-serde = "1"
 
 # Filesystem dialogs
-rfd = { version = "0.14", default-features = false, features = ["xdg-portal", "tokio"] }
+rfd = { version = "0.14", default-features = false, features = ["xdg-portal"] }
 
 # Random (for noise filters)
 rand = "0.8"
