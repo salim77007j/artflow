@@ -69,7 +69,7 @@ impl Document {
         doc
     }
 
-    /// Create a friendly welcome document with a gradient background.
+    /// Create a friendly welcome document with a gradient background and a demo layer.
     pub fn new_welcome(width: u32, height: u32) -> Self {
         let mut doc = Self::new("Untitled", width, height, Rgba::WHITE);
         // Paint a soft diagonal gradient onto the background layer.
@@ -86,6 +86,12 @@ impl Document {
                 }
             }
         }
+        // Add a demo "Layer 1" so the Layers panel has multiple entries by default.
+        let layer1 = Layer::new_pixel("Layer 1", width, height, Rgba::TRANSPARENT);
+        doc.add_layer("Layer 1", layer1);
+        let layer2 = Layer::new_pixel("Layer 2", width, height, Rgba::TRANSPARENT);
+        doc.add_layer("Layer 2", layer2);
+        doc.active_layer = Some(2); // pick the top-most new layer
         doc
     }
 
