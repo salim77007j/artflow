@@ -121,7 +121,7 @@ pub fn show(
     });
 
     // Handle pointer interactions.
-    handle_pointer(ui, doc, app, &response, canvas_rect);
+    handle_pointer(ui, doc, tools, color, active_tool, &response, canvas_rect);
 }
 
 fn draw_checker(painter: &egui::Painter, rect: Rect) {
@@ -164,7 +164,15 @@ fn march(painter: &egui::Painter, a: Pos2, b: Pos2, phase: f32, dash: f32, color
     }
 }
 
-fn handle_pointer(ui: &mut egui::Ui, doc: &mut Document, app: &mut ArtFlowApp, response: &egui::Response, canvas_rect: Rect) {
+fn handle_pointer(
+    ui: &mut egui::Ui,
+    doc: &mut Document,
+    tools: &mut ToolRegistry,
+    color: &mut ColorState,
+    active_tool: crate::tools::ToolId,
+    response: &egui::Response,
+    canvas_rect: Rect,
+) {
     // Pan with middle button / space drag.
     if response.dragged_by(egui::PointerButton::Middle) {
         let d = response.drag_delta();
